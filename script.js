@@ -54,29 +54,29 @@ function gutterWidth(e) {
   root.style.setProperty('--gutter', (e.target.value / 10) + 'em');
 }
 
-// Allows the user to reorder the tree with the keyboard
-root.addEventListener('keydown', function (e) {
-  var keyPress;
-  // New method vs. old method
-  if (e.key) keyPress = e.key;
-  else       keyPress = e.which;
-  // If the user is editing a node name, they might need to use the arrow keys As God Intended
-  if (e.target.getAttribute('contenteditable')) {
-    if (keyPress === ' ' || keyPress === '32') {
-      insertTextAtCursor(' ');
-    }
-  } else {
-    if (keyPress === 'ArrowRight' || keyPress === '37') {
-      demoteSibling();
-    } else if (keyPress === 'ArrowLeft' || keyPress === '39') {
-      promoteSibling();
-    }
-  }
-  // This is useful whether the user is editing the button or not
-  if (keyPress === 'ArrowDown' || keyPress === '40') {
-    addChild();
-  }
-});
+// // Allows the user to reorder the tree with the keyboard
+// root.addEventListener('keydown', function (e) {
+//   var keyPress;
+//   // New method vs. old method
+//   if (e.key) keyPress = e.key;
+//   else       keyPress = e.which;
+//   // If the user is editing a node name, they might need to use the arrow keys As God Intended
+//   if (e.target.getAttribute('contenteditable')) {
+//     if (keyPress === ' ' || keyPress === '32') {
+//       insertTextAtCursor(' ');
+//     }
+//   } else {
+//     if (keyPress === 'ArrowRight' || keyPress === '37') {
+//       demoteSibling();
+//     } else if (keyPress === 'ArrowLeft' || keyPress === '39') {
+//       promoteSibling();
+//     }
+//   }
+//   // This is useful whether the user is editing the button or not
+//   if (keyPress === 'ArrowDown' || keyPress === '40') {
+//     addChild();
+//   }
+// });
 
 // Deselects all other nodes, selects the current node and hoyks in the toolber
 function selectNode(e) {
@@ -189,42 +189,41 @@ function addChild() {
   if (document.querySelector('.tree .selected')) {
     var chosenNode = document.querySelector('.tree .selected').parentNode,
         listItem = document.createElement('li');
-    listItem.innerHTML = '<button type="button" aria-pressed="false" data-js="node" contenteditable="true"></button>';
+    listItem.innerHTML = '<div type="button" aria-pressed="false" data-js="node" contenteditable="true"></div>';
     // The current node already has kids
     if (chosenNode.querySelector('ul')) {
       var chosenKids = chosenNode.querySelector('ul');
       chosenKids.appendChild(listItem);
-      chosenKids.lastChild.querySelector('button').focus();
+      chosenKids.lastChild.querySelector('div').focus();
     } else { // The current node has no kids
       var newDad = document.createElement('ul');
       newDad.appendChild(listItem);
       chosenNode.appendChild(newDad);
-      chosenNode.lastChild.querySelector('button').focus();
+      chosenNode.lastChild.querySelector('div').focus();
     }    
   }
 }
 
 // Because each node is a button tag, the space bar event is captured, when the user is editing.
 // This is used as a work-around.
-function insertTextAtCursor(text) {
-    var sel, range;
-    if (window.getSelection) {
-        sel = window.getSelection();
-        if (sel.getRangeAt && sel.rangeCount) {
-            range = sel.getRangeAt(0);
-            range.deleteContents();
-            range.insertNode( document.createTextNode(text) );
-        }
-    } else if (document.selection && document.selection.createRange) {
-        document.selection.createRange().text = text;
-    }
-}
-
+// function insertTextAtCursor(text) {
+//     var sel, range;
+//     if (window.getSelection) {
+//         sel = window.getSelection();
+//         if (sel.getRangeAt && sel.rangeCount) {
+//             range = sel.getRangeAt(0);
+//             range.deleteContents();
+//             range.insertNode( document.createTextNode(text) );
+//         }
+//     } else if (document.selection && document.selection.createRange) {
+//         document.selection.createRange().text = text;
+//     }
+// }
 
 // Função para gerar um objeto representando a estrutura da árvore
 function generateTreeObject(element) {
   var children = [];
-  var button = element.querySelector('button[data-js="node"]');
+  var button = element.querySelector('div[data-js="node"]');
   if (button) {
     var ul = element.querySelector('ul');
     if (ul) {
@@ -278,7 +277,7 @@ function uploadTree(event) {
 
 // Função para construir a árvore a partir de um objeto
 function buildTree(treeObject, element) {
-  var button = document.createElement('button');
+  var button = document.createElement('div');
   button.id = treeObject.id;
   button.textContent = treeObject.name;
   button.style.backgroundColor = treeObject.color;
@@ -329,3 +328,65 @@ function enableNodeEditOnDblClick() {
 
 // Chame a função após a definição
 enableNodeEditOnDblClick();
+
+
+// Seleciona o botão "Salvar"
+let saveButton = document.querySelector('#saveButton');
+
+// Função para salvar o esquema de nós no cookie
+saveButton.addEventListener('click', function() {
+    var tree = document.querySelector('.tree');
+    var treeObject = generateTreeObject(tree);
+
+    // Verifique se a árvore não está vazia
+    if (treeObject.children.length > 0) {
+        localStorage.setItem('nodeScheme', JSON.stringify(treeObject));
+        alert('Salvo com sucesso!')
+    } else {
+        alert('A árvore está vazia. Não há nada para salvar.');
+    }
+});
+
+// Verifica se o cookie existe ao recarregar a página
+window.onload = function() {
+    let nodeScheme = localStorage.getItem('nodeScheme');
+    let tree = document.querySelector('.tree');
+    if (nodeScheme) {
+        nodeScheme = JSON.parse(nodeScheme);
+        
+        // Retorna o esquema de nós
+        tree.innerHTML = '';
+        buildTree(nodeScheme, tree);
+    }
+};
+
+
+const clearTree = document.querySelector('[data-js="clearTree"]');
+
+// Add event listener to the button
+clearTree.addEventListener('click', function() {
+  // Get the button element
+  let tree = document.querySelector('.tree');
+ let clearTreeConfirm = document.querySelector('[data-js="clearTree"] .confirm');
+
+    if (!clearTree.classList.contains('js-confirm')) {
+      clearTree.classList.add('js-confirm');
+      clearTreeConfirm.removeAttribute('aria-hidden');
+    }
+    
+
+    else {
+      tree.innerHTML = `
+            <li>
+              <div type="button" aria-pressed="false" data-js="node">Objetivo</div>
+              <ul>
+                <li><div type="button" aria-pressed="false" data-js="node">Passo 01</div></li>
+                <li><div type="button" aria-pressed="false" data-js="node">Passo 02</div></li>
+                <li><div type="button" aria-pressed="false" data-js="node">Passo 03</div></li>
+              </ul>
+            </li>
+          `;
+      clearTree.classList.remove('js-confirm');
+      clearTreeConfirm.setAttribute('aria-hidden', 'true');
+    }
+});

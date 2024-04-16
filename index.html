@@ -22,9 +22,14 @@
             <div class="top">
               <h3>treeview</h3>
               <div class="options">
+                <button id="saveButton">Salvar</button>
                 <button id="download-button">Download</button>
                 <input type="file" id="file-input" style="display: none;">
                 <button id="upload-input">Upload</button>
+                <button type="button" data-js="clearTree">
+                  Limpar
+                  <ins role="alert" aria-hidden="true" class="confirm" aria-label="Please confirm deletion">Tem certeza? (clique novamente para confirmar)</ins>
+                  </button>
               </div>
             </div>
             
@@ -59,11 +64,11 @@
           <div class="d-flex justify-content-center align-items-center">
             <ul class="tree">
                 <li>
-                  <button type="button" aria-pressed="false" data-js="node">Objetivo</button>
+                  <div type="button" aria-pressed="false" data-js="node">Objetivo</div>
                   <ul>
-                    <li><button type="button" aria-pressed="false" data-js="node">Passo 01</button></li>
-                    <li><button type="button" aria-pressed="false" data-js="node">Passo 02</button></li>
-                    <li><button type="button" aria-pressed="false" data-js="node">Passo 03</button></li>
+                    <li><div type="button" aria-pressed="false" data-js="node">Passo 01</div></li>
+                    <li><div type="button" aria-pressed="false" data-js="node">Passo 02</div></li>
+                    <li><div type="button" aria-pressed="false" data-js="node">Passo 03</div></li>
                   </ul>
                 </li>
               </ul>

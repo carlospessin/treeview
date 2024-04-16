@@ -54,13 +54,16 @@
   .tree li:last-child:before {
     right: 50%;
   }
-  .tree button, .options button {
+  .tree div, .options button {
     border-radius: 0.2em;
     margin: 0 calc(var(--gutter) / 2) var(--gutter);
     min-height: 2.1em;
     min-width: 6rem;
     position: relative;
     z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .tree [contenteditable] {
     cursor: text;
@@ -72,7 +75,7 @@
     -moz-box-shadow: 0 0 var(--gutter) var(--line-width) rgba(153, 0, 0, 0.3);
     box-shadow: 0 0 var(--gutter) var(--line-width) rgba(153, 0, 0, 0.3);
   }
-  .tree ul:before, .tree button:before {
+  .tree ul:before, .tree div:before {
     outline: solid calc(var(--line-width) / 2) var(--line-color);
     content: "";
     height: var(--gutter);
@@ -83,11 +86,15 @@
   .tree > li {
     margin-top: 0;
   }
-  .tree > li:before, .tree > li:after, .tree > li > button:before {
+  .tree > li:before, .tree > li:after, .tree > li > div:before {
     outline: none;
   }
   
   button {
+    width: 30px;
+    height: 30px;
+  }
+  .tree div, button {
     border-radius: 0.2em;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -100,7 +107,7 @@
     padding: 0.4em 1em;
     position: relative;
   }
-  button:focus, button:hover {
+ button:focus,button:hover {
     outline: 0.1em dotted var(--line-color);
     outline-offset: -0.5em;
   }
