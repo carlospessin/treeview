@@ -277,3 +277,27 @@ footer {
 .zoom-controls {
   display: flex;
 }
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 250px;
+  background-color: #f8f9fa;
+  padding: 20px;
+  overflow-y: auto;
+}
+.sidebar-item {
+  margin-bottom: 10px;
+}
+.sidebar-item-title {
+  cursor: pointer;
+  font-weight: bold;
+}
+.sidebar-item-list {
+  display: none;
+  margin-left: 15px;
+}
+.sidebar-item-list.active {
+  display: block;
+}

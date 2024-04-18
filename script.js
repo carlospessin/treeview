@@ -419,3 +419,39 @@ zoomOutButton.addEventListener("click", () => {
   zoomFactor /= 1.2; // Ajuste conforme necessário
   applyZoom(zoomFactor);
 });
+
+// Função para construir o menu lateral com base no JSON fornecido
+function buildSidebarMenu(jsonData, parentElement) {
+  var sidebarMenu = document.querySelector(".sidebar-menu");
+
+  // Para cada item no JSON
+  jsonData.forEach(function (item) {
+    var sidebarItem = document.createElement("div");
+    sidebarItem.classList.add("sidebar-item");
+
+    var sidebarItemTitle = document.createElement("div");
+    sidebarItemTitle.classList.add("sidebar-item-title");
+    sidebarItemTitle.textContent = item.name;
+
+    var sidebarItemList = document.createElement("div");
+    sidebarItemList.classList.add("sidebar-item-list");
+
+    // Se o item tiver filhos, construa um sub-menu
+    if (item.children && item.children.length > 0) {
+      buildSidebarMenu(item.children, sidebarItemList);
+    }
+
+    sidebarItem.appendChild(sidebarItemTitle);
+    sidebarItem.appendChild(sidebarItemList);
+    sidebarMenu.appendChild(sidebarItem);
+
+    // Adicione evento de clique ao título do item para expandir/collapsar
+    sidebarItemTitle.addEventListener("click", function () {
+      sidebarItemList.classList.toggle("active");
+    });
+  });
+}
+
+// Chame a função para construir o menu lateral com base no JSON fornecido
+var sidebarData = document.querySelector("#tree");
+buildSidebarMenu(jsonData, sidebarData);
