@@ -1,261 +1,279 @@
 :root {
-    --line-color: #777777;
-    --line-width: .1em;
-    --gutter: .8em;
-  }
-  
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-  }
-
-  body, html {
-    height: 100%;
-    margin: 0;
-  }
-  *, *:before, *:after {
-    box-sizing: border-box;
-  }
-  
-  .tree {
-    margin: 0 0 calc(var(--gutter) * 2);
-    text-align: center;
-    /* _________ */
-    /* | */
-    /* The root node doesn't connect upwards */
-  }
-  .tree, .tree ul, .tree li {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    position: relative;
-  }
-  .tree, .tree ul {
-    display: table;
-  }
-  .tree ul {
-    width: 100%;
-  }
-  .tree li {
-    display: table-cell;
-    padding: var(--gutter) 0;
-    vertical-align: top;
-  }
-  .tree li:before {
-    content: "";
-    left: 0;
-    outline: solid calc(var(--line-width) /2) var(--line-color);
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-  .tree li:first-child:before {
-    left: 50%;
-  }
-  .tree li:last-child:before {
-    right: 50%;
-  }
-  .tree div, .options button {
-    border-radius: 0.2em;
-    margin: 0 calc(var(--gutter) / 2) var(--gutter);
-    min-height: 2.1em;
-    min-width: 6rem;
-    position: relative;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .tree [contenteditable] {
-    cursor: text;
-  }
-  .tree .selected {
-    border-color: #900;
-    border-style: dashed;
-    -webkit-box-shadow: 0 0 var(--gutter) var(--line-width) rgba(153, 0, 0, 0.3);
-    -moz-box-shadow: 0 0 var(--gutter) var(--line-width) rgba(153, 0, 0, 0.3);
-    box-shadow: 0 0 var(--gutter) var(--line-width) rgba(153, 0, 0, 0.3);
-  }
-  .tree ul:before, .tree div:before {
-    outline: solid calc(var(--line-width) / 2) var(--line-color);
-    content: "";
-    height: var(--gutter);
-    left: 50%;
-    position: absolute;
-    top: calc(calc(-1 * var(--gutter)) - calc(var(--line-width) / 2));
-  }
-  .tree > li {
-    margin-top: 0;
-  }
-  .tree > li:before, .tree > li:after, .tree > li > div:before {
-    outline: none;
-  }
-  
-  button {
-    width: 30px;
-    height: 30px;
-  }
-  .tree div, button {
-    border-radius: 0.2em;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background: #fff;
-    border: solid var(--line-width) var(--line-color);
-    cursor: pointer;
-    font-size: 1em;
-    line-height: 1.2em;
-    padding: 0.4em 1em;
-    position: relative;
-  }
- button:focus,button:hover {
-    outline: 0.1em dotted var(--line-color);
-    outline-offset: -0.5em;
-  }
-  
-  input[type=range] {
-    display: block;
-    width: 100%;
-  }
-  
-  input[type=color] {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    border: none;
-    cursor: pointer;
-    display: block;
-    height: 2em;
-    padding: 0;
-    vertical-align: middle;
-    width: 100%;
-  }
-  
-  .toolbar {
-    transform: translate(0, -100%);
-    transition: all 0.2s ease;
-    display: flex;
-    justify-content: flex-end;
-    opacity: 0;
-  }
-  .tools {
-    display: flex;
-    flex-direction: column;
-    background: #ccc;
-    font-size: 0.9em;
-    padding: var(--gutter);
-    border-radius: 0.2rem;
-    margin: 0 calc(var(--gutter) / 2) var(--gutter);
-  }
-  
-  .toolbar.show {
-    transform: translate(0, 0);
-    opacity: 1;
-  }
-  
-  ins {
-    background: #fff;
-    border: solid calc(var(--line-width) /2) var(--line-color);
-    display: inline-block;
-    font-size: 0.8em;
-    left: -1em;
-    margin: 1em 0 0;
-    padding: 0.2em 0.5em;
-    position: absolute;
-    right: -1em;
-    text-decoration: none;
-    top: 100%;
-  }
-  ins:before, ins:after {
-    border: solid 1em transparent;
-    border-top: none;
-    content: "";
-    left: 50%;
-    position: absolute;
-    transform: translate(-50%, 0);
-  }
-  ins:before {
-    border-bottom-color: var(--line-color);
-    bottom: 100%;
-  }
-  ins:after {
-    bottom: calc(100% - var(--line-width));
-    border-bottom-color: #fff;
-  }
-  
-  ins {
-    opacity: 0;
-    transition: all 0.2s ease;
-    transform: scale(0, 0);
-  }
-  
-  .js-confirm .confirm, .js-root .root {
-    opacity: 1;
-    transform: scale(1, 1);
-  }
-  
-  .grid {
-    display: flex;
-    width: 100%;
-  }
-  .grid > * {
-    flex: 1;
-    margin-left: 0.5em;
-    margin-right: 0.5em;
-  }
-  .color {
-    width: 30px;
-    height: 30px;
-    display: inline-block;
-    margin: 5px;
-    border-radius: 8px;
+  --line-color: #777777;
+  --line-width: 0.1em;
+  --gutter: 0.8em;
 }
-  #color-options{
-    display: flex;
-    justify-content: center;
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+body,
+html {
+  height: 100%;
+  margin: 0;
+}
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+.tree {
+  margin: 0 0 calc(var(--gutter) * 2);
+  text-align: center;
+  /* _________ */
+  /* | */
+  /* The root node doesn't connect upwards */
+}
+.tree,
+.tree ul,
+.tree li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+.tree,
+.tree ul {
+  display: table;
+}
+.tree ul {
+  width: 100%;
+}
+.tree li {
+  display: table-cell;
+  padding: var(--gutter) 0;
+  vertical-align: top;
+}
+.tree li:before {
+  content: "";
+  left: 0;
+  outline: solid calc(var(--line-width) / 2) var(--line-color);
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.tree li:first-child:before {
+  left: 50%;
+}
+.tree li:last-child:before {
+  right: 50%;
+}
+.tree div,
+.options button {
+  border-radius: 0.2em;
+  margin: 0 calc(var(--gutter) / 2) var(--gutter);
+  min-height: 2.1em;
+  min-width: 6rem;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tree [contenteditable] {
+  cursor: text;
+}
+.tree .selected {
+  border-color: #900;
+  border-style: dashed;
+  -webkit-box-shadow: 0 0 var(--gutter) var(--line-width) rgba(153, 0, 0, 0.3);
+  -moz-box-shadow: 0 0 var(--gutter) var(--line-width) rgba(153, 0, 0, 0.3);
+  box-shadow: 0 0 var(--gutter) var(--line-width) rgba(153, 0, 0, 0.3);
+}
+.tree ul:before,
+.tree div:before {
+  outline: solid calc(var(--line-width) / 2) var(--line-color);
+  content: "";
+  height: var(--gutter);
+  left: 50%;
+  position: absolute;
+  top: calc(calc(-1 * var(--gutter)) - calc(var(--line-width) / 2));
+}
+.tree > li {
+  margin-top: 0;
+}
+.tree > li:before,
+.tree > li:after,
+.tree > li > div:before {
+  outline: none;
+}
+
+button {
+  width: 30px;
+  height: 30px;
+}
+.tree div,
+button {
+  border-radius: 0.2em;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: #fff;
+  border: solid var(--line-width) var(--line-color);
+  cursor: pointer;
+  font-size: 1em;
+  line-height: 1.2em;
+  padding: 0.4em 1em;
+  position: relative;
+}
+button:focus,
+button:hover {
+  outline: 0.1em dotted var(--line-color);
+  outline-offset: -0.5em;
+}
+
+input[type="range"] {
+  display: block;
+  width: 100%;
+}
+
+input[type="color"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  display: block;
+  height: 2em;
+  padding: 0;
+  vertical-align: middle;
+  width: 100%;
+}
+
+.toolbar {
+  transform: translate(0, -100%);
+  transition: all 0.2s ease;
+  display: flex;
+  justify-content: flex-end;
+  opacity: 0;
+}
+.tools {
+  display: flex;
+  flex-direction: column;
+  background: #ccc;
+  font-size: 0.9em;
+  padding: var(--gutter);
+  border-radius: 0.2rem;
+  margin: 0 calc(var(--gutter) / 2) var(--gutter);
+}
+
+.toolbar.show {
+  transform: translate(0, 0);
+  opacity: 1;
+}
+
+ins {
+  background: #fff;
+  border: solid calc(var(--line-width) / 2) var(--line-color);
+  display: inline-block;
+  font-size: 0.8em;
+  left: -1em;
+  margin: 1em 0 0;
+  padding: 0.2em 0.5em;
+  position: absolute;
+  right: -1em;
+  text-decoration: none;
+  top: 100%;
+}
+ins:before,
+ins:after {
+  border: solid 1em transparent;
+  border-top: none;
+  content: "";
+  left: 50%;
+  position: absolute;
+  transform: translate(-50%, 0);
+}
+ins:before {
+  border-bottom-color: var(--line-color);
+  bottom: 100%;
+}
+ins:after {
+  bottom: calc(100% - var(--line-width));
+  border-bottom-color: #fff;
+}
+
+ins {
+  opacity: 0;
+  transition: all 0.2s ease;
+  transform: scale(0, 0);
+}
+
+.js-confirm .confirm,
+.js-root .root {
+  opacity: 1;
+  transform: scale(1, 1);
+}
+
+.grid {
+  display: flex;
+  width: 100%;
+}
+.grid > * {
+  flex: 1;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+.color {
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+  margin: 5px;
+  border-radius: 8px;
+}
+#color-options {
+  display: flex;
+  justify-content: center;
+}
+header {
+  display: flex;
+  flex-direction: column;
+}
+.top {
+  display: flex;
+  justify-content: space-between;
+}
+.container {
+  padding: 10px 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+}
+.heart {
+  fill: #ccc;
+  margin: 0 0.5rem;
+  width: 1rem;
+  animation: pound 0.35s infinite alternate;
+  -webkit-animation: pound 0.35s infinite alternate;
+}
+@-webkit-keyframes pound {
+  to {
+    transform: scale(1.1);
   }
-  header {
-    display: flex;
-    flex-direction: column;
+}
+@keyframes pound {
+  to {
+    transform: scale(1.1);
   }
-  .top {
-    display: flex;
-    justify-content: space-between;
-  }
-  .container {
-    padding: 10px 0;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    justify-content: space-between;
-  }
-  .heart {
-    fill: #ccc;
-    margin: 0 0.5rem;
-    width: 1rem;
-    animation: pound 0.35s infinite alternate;
-    -webkit-animation: pound 0.35s infinite alternate;
-  }
-  @-webkit-keyframes pound {
-    to {
-      transform: scale(1.1);
-    }
-  }
-  @keyframes pound {
-    to {
-      transform: scale(1.1);
-    }
-  }
-  div footer svg.heart {
-    fill: #ccc;
-    margin: 0 0.5rem;
-    width: 0.7rem;
-    animation: pound 0.35s infinite alternate;
-    -webkit-animation: pound 0.35s infinite alternate;
-  }
-  footer{
-    display: flex;
-    justify-content: center;
-  }
-  .options {
-    display: flex;
-  }
+}
+div footer svg.heart {
+  fill: #ccc;
+  margin: 0 0.5rem;
+  width: 0.7rem;
+  animation: pound 0.35s infinite alternate;
+  -webkit-animation: pound 0.35s infinite alternate;
+}
+footer {
+  display: flex;
+  justify-content: center;
+}
+.options {
+  display: flex;
+}
+.zoom-controls {
+  display: flex;
+}
