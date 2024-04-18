@@ -194,6 +194,12 @@ function addChild() {
       listItem = document.createElement("li");
     listItem.innerHTML =
       '<div type="button" aria-pressed="false" data-js="node" contenteditable="true"></div>';
+
+    // Generate a unique ID for the new node
+    var nodeId = uuid.v4();
+    listItem.firstChild.id = nodeId;
+
+      
     // The current node already has kids
     if (chosenNode.querySelector("ul")) {
       var chosenKids = chosenNode.querySelector("ul");
@@ -230,6 +236,7 @@ function generateTreeObject(element) {
   var children = [];
   var button = element.querySelector('div[data-js="node"]');
   if (button) {
+    console.log(button);
     var ul = element.querySelector("ul");
     if (ul) {
       for (var i = 0; i < ul.children.length; i++) {
@@ -250,13 +257,22 @@ function generateTreeObject(element) {
 }
 
 // Função para baixar a estrutura da árvore como um arquivo JSON
-function downloadTree() {
+function generateTreeJson() {
   var tree = document.querySelector(".tree");
   var treeObject = generateTreeObject(tree);
 
   // Verifique se a árvore não está vazia
   if (treeObject.children.length > 0) {
-    var blob = new Blob([JSON.stringify(treeObject)], {
+    return JSON.stringify(treeObject);
+  } else {
+    alert("A árvore está vazia. Não há nada para gerar.");
+    return null;
+  }
+}
+
+function downloadJson(json) {
+  if (json) {
+    var blob = new Blob([json], {
       type: "application/json",
     });
     var url = URL.createObjectURL(blob);
@@ -264,9 +280,13 @@ function downloadTree() {
     link.href = url;
     link.download = "tree.json";
     link.click();
-  } else {
-    alert("A árvore está vazia. Não há nada para baixar.");
   }
+}
+
+// Função para baixar a estrutura da árvore como um arquivo JSON
+function downloadTree() {
+  var json = generateTreeJson();
+  downloadJson(json);
 }
 
 // Função para carregar a estrutura da árvore a partir de um arquivo JSON
@@ -278,6 +298,7 @@ function uploadTree(event) {
     var tree = document.querySelector(".tree");
     tree.innerHTML = "";
     buildTree(treeObject, tree);
+    updateSidebarMenu(treeObject);
   };
   reader.readAsText(file);
 }
@@ -364,6 +385,13 @@ window.onload = function () {
     tree.innerHTML = "";
     buildTree(nodeScheme, tree);
   }
+
+  var elements = document.querySelectorAll('div[data-js="node"]');
+
+// Para cada elemento, gere um UUID e adicione-o como o id do elemento
+elements.forEach(function(element) {
+  element.id = uuid.v4();
+});
 };
 
 const clearTree = document.querySelector('[data-js="clearTree"]');
@@ -420,38 +448,92 @@ zoomOutButton.addEventListener("click", () => {
   applyZoom(zoomFactor);
 });
 
-// Função para construir o menu lateral com base no JSON fornecido
-function buildSidebarMenu(jsonData, parentElement) {
-  var sidebarMenu = document.querySelector(".sidebar-menu");
+// Função para construir o menu lateral com base na estrutura da árvore
+function buildSidebarMenu(treeObject, parentElement) {
+  var sidebarMenu = document.querySelector('.sidebar-menu');
 
-  // Para cada item no JSON
-  jsonData.forEach(function (item) {
-    var sidebarItem = document.createElement("div");
-    sidebarItem.classList.add("sidebar-item");
+  // Trata o objeto como um array de um único item
+  var treeArray = Array.isArray(treeObject) ? treeObject : [treeObject];
 
-    var sidebarItemTitle = document.createElement("div");
-    sidebarItemTitle.classList.add("sidebar-item-title");
-    sidebarItemTitle.textContent = item.name;
+  // Para cada nó na árvore
+  treeArray.forEach(function(node) {
+      var sidebarItem = document.createElement('div');
+      sidebarItem.classList.add('sidebar-item');
 
-    var sidebarItemList = document.createElement("div");
-    sidebarItemList.classList.add("sidebar-item-list");
+      var sidebarItemTitle = document.createElement('div');
+      sidebarItemTitle.classList.add('sidebar-item-title');
+      sidebarItemTitle.textContent = node.name;
 
-    // Se o item tiver filhos, construa um sub-menu
-    if (item.children && item.children.length > 0) {
-      buildSidebarMenu(item.children, sidebarItemList);
-    }
+      var sidebarItemList = document.createElement('div');
+      sidebarItemList.classList.add('sidebar-item-list');
 
-    sidebarItem.appendChild(sidebarItemTitle);
-    sidebarItem.appendChild(sidebarItemList);
-    sidebarMenu.appendChild(sidebarItem);
+      // Se o nó tiver filhos, construa um sub-menu
+      if (node.children.length > 0) {
+          buildSidebarMenu(node.children, sidebarItemList);
+      }
 
-    // Adicione evento de clique ao título do item para expandir/collapsar
-    sidebarItemTitle.addEventListener("click", function () {
-      sidebarItemList.classList.toggle("active");
-    });
+      sidebarItem.appendChild(sidebarItemTitle);
+      sidebarItem.appendChild(sidebarItemList);
+      sidebarMenu.appendChild(sidebarItem);
+
+      // Adicione evento de clique ao título do item para expandir/collapsar
+      sidebarItemTitle.addEventListener('click', function() {
+          sidebarItemList.classList.toggle('active');
+      });
   });
 }
 
-// Chame a função para construir o menu lateral com base no JSON fornecido
-var sidebarData = document.querySelector("#tree");
-buildSidebarMenu(jsonData, sidebarData);
+
+// Chame a função para construir o menu lateral após a definição da árvore
+// var treeId = document.querySelector('#tree');
+// var treeObject = generateTreeObject(treeId);
+// buildSidebarMenu([treeObject], null);
+
+function updateSidebarMenu(treeJson, parentElement, parentId = 'sidebarmenu') {
+  // Se não houver um elemento pai fornecido, use o menu lateral como o elemento pai
+  if (!parentElement) {
+      parentElement = document.getElementById(parentId);
+      parentElement.innerHTML = '';
+  }
+
+  // Crie novos elementos de menu para cada nó na árvore JSON
+  for (let i = 0; i < treeJson.children.length; i++) {
+      let node = treeJson.children[i];
+      let menuItem = document.createElement('div');
+      menuItem.className = 'accordion-item';
+
+      let h2 = document.createElement('h2');
+      h2.className = 'accordion-header';
+      h2.id = `heading-${node.id}`;
+      menuItem.appendChild(h2);
+
+      let button = document.createElement('button');
+      button.className = 'accordion-button collapsed';
+      button.type = 'button';
+      button.dataset.bsToggle = 'collapse';
+      button.dataset.bsTarget = `#collapse-${node.id}`;
+      button.textContent = node.name;
+      h2.appendChild(button);
+
+      let collapseDiv = document.createElement('div');
+      collapseDiv.id = `collapse-${node.id}`;
+      collapseDiv.className = 'accordion-collapse collapse';
+      collapseDiv.setAttribute('aria-labelledby', `heading-${node.id}`);
+      menuItem.appendChild(collapseDiv);
+
+      let bodyDiv = document.createElement('div');
+      bodyDiv.className = 'accordion-body';
+      collapseDiv.appendChild(bodyDiv);
+
+      parentElement.appendChild(menuItem);
+
+      // Se o nó tiver filhos, crie um submenu
+      if (node.children && node.children.length > 0) {
+          let submenu = document.createElement('div');
+          submenu.className = 'accordion';
+          bodyDiv.appendChild(submenu);
+          updateSidebarMenu(node, submenu, `collapse-${node.id}`);
+      }
+  }
+}
+
